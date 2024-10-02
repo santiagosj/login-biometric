@@ -34,6 +34,7 @@ export const httpRequestFactory = <T>(method: HttpMethod, url: string) => {
 
         try {
             const response = await fetch(url, options);
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

@@ -14,7 +14,9 @@ if (!process.env.JWT_SECRET) {
 const app = fastify();
 app.register(fastifyCors, {
     origin: (origin, cb) => {
-        const allowedOrigins = ['http://localhost:5173'];
+        const allowedOrigins = [
+            'http://localhost:5173',
+        ];
 
         if (!origin || allowedOrigins.includes(origin)) {
             // Si origin es undefined (solicitud no desde navegador) o está en la lista permitida, permitir el acceso
@@ -26,7 +28,6 @@ app.register(fastifyCors, {
     }
 });
 
-
 // Registro de rutas
 authRoutes(app);
 
@@ -37,7 +38,6 @@ app.get('/', async (request, response) => {
 try {
     const port = process.env.PORT || 3001;
     app.listen({ port: Number(port), host: '0.0.0.0' });
-    console.log(`Server is running on port ${port}`);
 } catch (err) {
     app.log.error(err);
     process.exit(1);

@@ -1,10 +1,10 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "index.tj",
+  "main": "index.ts",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "ts-node-dev src/index.ts",
+    "serve": "ts-node-dev src/index.ts",
     "build": "tsc"
   },
   "keywords": [],

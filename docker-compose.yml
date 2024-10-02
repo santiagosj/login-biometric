@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   redis:
@@ -24,7 +24,9 @@ services:
       - redis # Hace que Redis se levante antes que el backend
     networks:
       - app-network
-    image: node:20
+    volumes:
+      - ./server:/app/backend # Ruta personalizada
+    command: [ "npm", "run", "dev" ]
 
   frontend:
     build: ./client # Ruta donde está el Dockerfile del frontend
@@ -35,8 +37,10 @@ services:
       - backend # Hace que el backend se levante antes que el frontend
     networks:
       - app-network
+    volumes:
+      - ./client:/app/frontend # Ruta personalizada
     image: node:20
-
+    command: [ "npm", "run", "dev" ]
 networks:
   app-network:
     driver: bridge

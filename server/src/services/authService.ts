@@ -25,7 +25,7 @@ export const authService = {
             };
 
             // crear el usuario en firebase
-            await client.hSet(`user${userId}`, userData)
+            await client.hset(`user${userId}`, userData)
 
             //guardar el hash de la contrasena y datos adicionales en firestore
             await client.set(`user${email}`, userId)
@@ -45,7 +45,7 @@ export const authService = {
                 return { status: 400, message: 'User not found' };
             }
 
-            await client.hSet(`user:${user}`, { credentialId, publicKey });
+            await client.hset(`user:${user}`, { credentialId, publicKey });
 
             return { status: 200, message: "Registration Complete" }
 
@@ -61,7 +61,7 @@ export const authService = {
             if (!user) {
                 return { status: 404, message: 'User not found' };
             }
-            const userData = await client.hGetAll(`user:${user}`)
+            const userData = await client.hgetall(`user:${user}`)
 
             if (!userData || !userData.publicKey) {
                 return { status: 404, message: 'User not found' };
@@ -85,7 +85,7 @@ export const authService = {
                 return { status: 404, message: 'User not found' };
             }
 
-            const userData = await client.hGetAll(`user:${user}`)
+            const userData = await client.hgetall(`user:${user}`)
 
             if (userData?.credentialId !== credentialId) {
                 return { status: 400, message: 'Credential ID does not match' };
