@@ -18,15 +18,16 @@ services:
     ports:
       - "3001:3001" # Expone el backend en el puerto 3001
     environment:
-      - REDIS_URL=redis # Dirección del servicio Redis
-      - REDIS_PASSWORD=${REDIS_PASSWORD} # Contraseña de Redis
+      - REDIS_URL=${REDIS_URL} # Esto debería ser correcto
+      - REDIS_PASSWORD=${REDIS_PASSWORD} # Esto debería ser correcto
+      - JWT_SECRET=${JWT_SECRET} # Asegúrate de incluir esta línea
     depends_on:
       - redis # Hace que Redis se levante antes que el backend
     networks:
       - app-network
     volumes:
       - ./server:/app/backend # Ruta personalizada
-    command: [ "npm", "run", "dev" ]
+    command: [ "npm", "run", "serve" ]
 
   frontend:
     build: ./client # Ruta donde está el Dockerfile del frontend

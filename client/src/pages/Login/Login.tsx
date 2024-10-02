@@ -1,5 +1,6 @@
 import React from 'react';
 import UserForm from '../../componentes/Molecules/UserForm/UserForm';
+import { httpRequestFactory } from '../../service/httpRequestFactory';
 import './Login.scss';
 
 const Login: React.FC = () => {
