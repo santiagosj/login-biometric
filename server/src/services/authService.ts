@@ -17,18 +17,15 @@ export const authService = {
 
             const userData = {
                 email,
-                username: username || '',  // Asegúrate de que nunca sea undefined
-                passwordHash: passwordHash || '',  // Asegúrate de que nunca sea undefined
+                username: username || '',
+                passwordHash: passwordHash || '',
                 createdAt: new Date().toISOString(),
                 publicKey: '',
                 credentialId: ''
             };
 
-            // crear el usuario en firebase
-            await client.hset(`user${userId}`, userData)
-
-            //guardar el hash de la contrasena y datos adicionales en firestore
-            await client.set(`user${email}`, userId)
+            await client.hset(`user:${userId}`, userData);
+            await client.set(`user:${email}`, userId);
 
             return { status: 200, message: "User Created", user: { email, username, userId } }
         } catch (err) {
@@ -54,29 +51,37 @@ export const authService = {
         }
     },
 
-    async loginUser(email: string) {
+    async loginUser(email: string, password: string) {
         try {
-            const user = await client.get(`user:${email}`)
-
+            const user = await client.get(`user:${email}`);
             if (!user) {
                 return { status: 404, message: 'User not found' };
             }
-            const userData = await client.hgetall(`user:${user}`)
 
-            if (!userData || !userData.publicKey) {
-                return { status: 404, message: 'User not found' };
+            const userData = await client.hgetall(`user:${user}`);
+
+            // Verificar contraseña
+            const passwordMatch = await bcrypt.compare(password, userData.passwordHash);
+            if (!passwordMatch) {
+                return { status: 401, message: 'Invalid password' };
             }
 
+            // Permitir el login aún si no tiene los datos biométricos registrados
+            if (!userData.publicKey || !userData.credentialId) {
+                return { status: 200, message: 'Login successful, biometric data not registered yet', user: { email, username: userData.username } };
+            }
+
+            // Si tiene datos biométricos, continuar con el flujo normal de login
             const options = {
                 challenge: randomBytes(32).toString('base64'),
                 allowCredentials: [{ id: userData.credentialId, type: 'public-key' }]
-            }
-            return { status: 200, options }
+            };
+            return { status: 200, options };
+
         } catch (err) {
-            return { status: 500, message: "Error al iniciar sesion" }
+            return { status: 500, message: "Error during login" };
         }
     },
-
     async completeLogin(email: string, credentialId: string) {
         try {
             const user = await client.get(`user:${email}`)

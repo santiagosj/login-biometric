@@ -25,15 +25,14 @@ export const authController = {
 
     },
     async login(request: FastifyRequest, reply: FastifyReply) {
-        const { email } = request.body as { email: string };
+        const { email, password } = request.body as { email: string, password: string };
         try {
-            const result = await authService.loginUser(email,);
+            const result = await authService.loginUser(email, password);
             reply.send(result);
         } catch (error) {
             const errorType = error as Error
             reply.code(500).send({ message: errorType.message });
         }
-
     },
     async completeLogin(request: FastifyRequest, reply: FastifyReply) {
         const { email, credentialId } = request.body as { email: string, credentialId: string };

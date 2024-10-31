@@ -1,0 +1,29 @@
+.button {
+    height: 2rem;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.primary-button {
+    background-color: #697dff;
+    color: #ffffff;
+}
+
+.secondary-button {
+    background-color: #2196F3;
+    border: #697dff;
+}
+
+.size-large {
+    width: 100%;
+}
+
+.size-medium {
+    width: 50%;
+}
+
+.size-small {
+    width: 25%;
+}

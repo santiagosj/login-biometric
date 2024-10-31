@@ -2,46 +2,54 @@ version: '3.8'
 
 services:
   redis:
-    image: redis:latest # Aquí especificas la imagen de Redis
+    image: redis:latest
     container_name: redis-server
-    command: [ "redis-server", "--requirepass", "${REDIS_PASSWORD}" ] # Configurar la contraseña de Redis
+    command: [ "redis-server", "--requirepass", "${REDIS_PASSWORD}" ]
     ports:
-      - "6379:6379" # Expone Redis en el puerto 6379
+      - "6379:6379"
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     networks:
       - app-network
+    volumes:
+      - redis-data:/data
 
   backend:
-    build: ./server # Ruta donde está el Dockerfile del backend
+    build: ./server
     container_name: backend
     ports:
-      - "3001:3001" # Expone el backend en el puerto 3001
+      - "3001:3001"
     environment:
-      - REDIS_URL=${REDIS_URL} # Esto debería ser correcto
-      - REDIS_PASSWORD=${REDIS_PASSWORD} # Esto debería ser correcto
-      - JWT_SECRET=${JWT_SECRET} # Asegúrate de incluir esta línea
+      - REDIS_URL=${REDIS_URL}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
-      - redis # Hace que Redis se levante antes que el backend
+      - redis
     networks:
       - app-network
     volumes:
-      - ./server:/app/backend # Ruta personalizada
+      - ./server:/app
+      - ./server/src:/app/src
     command: [ "npm", "run", "serve" ]
 
   frontend:
-    build: ./client # Ruta donde está el Dockerfile del frontend
+    build: ./client
     container_name: frontend
     ports:
-      - "5173:5173" # Expone el frontend en el puerto 5173 (si usas Vite)
+      - "3000:3000"
     depends_on:
-      - backend # Hace que el backend se levante antes que el frontend
+      - backend
     networks:
       - app-network
     volumes:
-      - ./client:/app/frontend # Ruta personalizada
+      - ./client:/app
+      - ./client/src:/app/src
+      - ./client/vite.config.ts:/app/vite.config.ts
     image: node:20
     command: [ "npm", "run", "dev" ]
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  redis-data: {}

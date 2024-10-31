@@ -153,9 +153,11 @@ const UserForm: React.FC<UserFormProps> = ({ fields, submitLabel, handleSubmit }
                 </div>
             ))}
             <Button
+                mode
                 type="submit"
                 label={submitLabel}
                 disabled={!isFormValid}
+                size="medium"
             />
         </form>
     );

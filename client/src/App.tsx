@@ -11,7 +11,6 @@ function App() {
         <AppHolder />
       </HashRouter>
     </AuthProvider>
-
   )
 }
 
