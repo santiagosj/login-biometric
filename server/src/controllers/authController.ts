@@ -17,12 +17,11 @@ export const authController = {
         const { email, credentialId, publicKey } = request.body as { email: string, credentialId: string, publicKey: string };
         try {
             const result = await authService.completeRegistration(email, credentialId, publicKey);
-            reply.send(result);
+            reply.send(result); // `result` ahora contiene `options`
         } catch (error) {
-            const errorType = error as Error
+            const errorType = error as Error;
             reply.code(500).send({ message: errorType.message });
         }
-
     },
     async login(request: FastifyRequest, reply: FastifyReply) {
         const { email, password } = request.body as { email: string, password: string };

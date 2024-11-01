@@ -44,7 +44,26 @@ export const authService = {
 
             await client.hset(`user:${user}`, { credentialId, publicKey });
 
-            return { status: 200, message: "Registration Complete" }
+            const options = {
+                publicKey: {
+                    challenge: randomBytes(32).toString('base64url'),
+                    rp: { name: "Login portfolio", id: "localhost" },
+                    user: {
+                        id: Buffer.from(user).toString('base64url'), // o como sea que obtengas el ID de usuario
+                        name: email,
+                        displayName: "User Display Name"
+                    },
+                    pubKeyCredParams: [{ type: "public-key", alg: -7 }], // Puedes ajustar el algoritmo según lo necesario
+                    timeout: 60000,
+                    authenticatorSelection: {
+                        authenticatorAttachment: "platform",
+                        userVerification: "required"
+                    },
+                    attestation: "direct"
+                }
+            };
+
+            return { status: 200, message: "Registration Complete", options }
 
         } catch (err) {
             return { status: 500, message: "Error completing the registration" }

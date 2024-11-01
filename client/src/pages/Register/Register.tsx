@@ -1,9 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import UserForm from '../../componentes/Molecules/UserForm/UserForm';
 import './Register.scss';
 import { httpRequestFactory } from '../../service/httpRequestFactory';
 
 const Register: React.FC = () => {
+    const navigate = useNavigate();
     const registerUser = httpRequestFactory('POST', 'http://localhost:3001/register');
 
     const fields = [
@@ -13,9 +15,15 @@ const Register: React.FC = () => {
     ];
 
     const handleRegister = async (data: { [key: string]: string }) => {
-        const register = await registerUser(data);
-        console.log(register);
-        // console.log('Register data:', data);
+        try {
+            const register = await registerUser(data) as Response
+            if (register.status === 200) {
+                navigate('/login');
+            }
+        } catch (error) {
+            alert('Error registering user');
+            console.error('Error registering user:', error);
+        }
     };
 
     return (

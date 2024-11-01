@@ -31,12 +31,9 @@ const Login: React.FC = () => {
             if (status === 200) {
                 login();
                 navigate('/user-info');
-                console.log(user);
             } else {
                 alert('Error al iniciar sesión');
             }
-
-            console.log(responseLogin);
 
         } catch (error) {
             console.log(error);
