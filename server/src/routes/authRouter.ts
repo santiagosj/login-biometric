@@ -6,4 +6,5 @@ export const authRoutes = (app: FastifyInstance) => {
     app.post('/register/complete', authController.completeRegistration);
     app.post('/login', authController.login);
     app.post('/login/complete', authController.completeLogin);
+    app.post('/save-credentials', authController.saveCredentials);
 };

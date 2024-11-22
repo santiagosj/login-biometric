@@ -7,7 +7,11 @@ export const authController = {
 
         try {
             const result = await authService.registerUser(email, username, password);
-            reply.send(result);
+            if (result.status && result.status !== 200) {
+                reply.code(result.status).send({ message: result.message });
+            } else {
+                reply.code(200).send(result);
+            }
         } catch (error) {
             const errorType = error as Error
             reply.code(500).send({ message: errorType.message });
@@ -17,19 +21,43 @@ export const authController = {
         const { email, credentialId, publicKey } = request.body as { email: string, credentialId: string, publicKey: string };
         try {
             const result = await authService.completeRegistration(email, credentialId, publicKey);
-            reply.send(result); // `result` ahora contiene `options`
+            if (result.status && result.status !== 200) {
+                reply.code(result.status).send({ message: result.message });
+            } else {
+                reply.code(200).send(result);
+            }
         } catch (error) {
             const errorType = error as Error;
             reply.code(500).send({ message: errorType.message });
         }
     },
+    async saveCredentials(request: FastifyRequest, reply: FastifyReply) {
+        const { userId, credentialId, publicKey } = request.body as { userId: string, credentialId: string, publicKey: string };
+        try {
+            const result = await authService.saveCredential(userId, credentialId, publicKey);
+            if (result.status && result.status !== 200) {
+                reply.code(result.status).send({ message: result.message });
+            } else {
+                reply.code(200).send(result);
+            }
+        } catch (error) {
+            const errorType = error as Error;
+            reply.code(500).send({ message: errorType.message });
+        }
+    },
+
     async login(request: FastifyRequest, reply: FastifyReply) {
-        const { email, password } = request.body as { email: string, password: string };
+        const { email, password } = request.body as { email: string; password: string };
+
         try {
             const result = await authService.loginUser(email, password);
-            reply.send(result);
+            if (result.status && result.status !== 200) {
+                reply.code(result.status).send({ message: result.message });
+            } else {
+                reply.code(200).send(result);
+            }
         } catch (error) {
-            const errorType = error as Error
+            const errorType = error as Error;
             reply.code(500).send({ message: errorType.message });
         }
     },
@@ -37,7 +65,11 @@ export const authController = {
         const { email, credentialId } = request.body as { email: string, credentialId: string };
         try {
             const result = await authService.completeLogin(email, credentialId);
-            reply.send(result);
+            if (result.status && result.status !== 200) {
+                reply.code(result.status).send({ message: result.message });
+            } else {
+                reply.code(200).send(result);
+            }
         } catch (error) {
             const errorType = error as Error
             reply.code(500).send({ message: errorType.message });

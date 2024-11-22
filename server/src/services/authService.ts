@@ -42,6 +42,10 @@ export const authService = {
                 return { status: 400, message: 'User not found' };
             }
 
+            if (!credentialId || !publicKey) {
+                return { status: 400, message: 'Credential ID or Public Key not provided' };
+            }
+
             await client.hset(`user:${user}`, { credentialId, publicKey });
 
             const options = {
@@ -49,14 +53,15 @@ export const authService = {
                     challenge: randomBytes(32).toString('base64url'),
                     rp: { name: "Login portfolio", id: "localhost" },
                     user: {
-                        id: Buffer.from(user).toString('base64url'), // o como sea que obtengas el ID de usuario
+                        id: Buffer.from(user).toString('base64url'),
                         name: email,
                         displayName: "User Display Name"
                     },
-                    pubKeyCredParams: [{ type: "public-key", alg: -7 }], // Puedes ajustar el algoritmo según lo necesario
+                    pubKeyCredParams: [{ type: "public-key", alg: -7 }],
                     timeout: 60000,
                     authenticatorSelection: {
                         authenticatorAttachment: "platform",
+                        residentKey: "required",
                         userVerification: "required"
                     },
                     attestation: "direct"
@@ -67,6 +72,24 @@ export const authService = {
 
         } catch (err) {
             return { status: 500, message: "Error completing the registration" }
+        }
+    },
+
+    async saveCredential(email: string, credentialId: string, publicKey: string) {
+        try {
+            const user = await client.get(`user:${email}`);
+
+            if (!user) {
+                return { status: 400, message: 'User not found' };
+            }
+            if (!credentialId || !publicKey) {
+                return { status: 400, message: 'Credential ID or Public Key not provided' };
+            }
+            // Guardar credenciales en Redis
+            await client.hset(`user:${user}`, { credentialId, publicKey });
+            return { status: 200, message: "Credential saved" }
+        } catch (err) {
+            return { status: 500, message: "Error saving the credential" }
         }
     },
 
